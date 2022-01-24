@@ -33,6 +33,6 @@ class EmailDemo extends Mailable
     {
         return $this->subject('Mail from ItSolutionStuff.com')
                     ->view('Email.receiveOrderEmail')
-                    ->with('mailData',$this->mailData);
+                    
     }
 }
