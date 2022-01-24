@@ -1,4 +1,4 @@
-@component('mail::message')
+<!-- @component('mail::message')
 # Introduction
 
 Hello, 
@@ -10,4 +10,13 @@ Button Text
 
 Thanks,<br>
 {{ config('app.name') }}
-@endcomponent
+@endcomponent -->
+
+
+<html>
+<head>
+</head>
+<body>
+   <div>hello this is test email.</div>
+</body>
+</html>
