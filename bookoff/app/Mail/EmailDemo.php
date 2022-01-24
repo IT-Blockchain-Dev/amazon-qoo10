@@ -29,7 +29,8 @@ class EmailDemo extends Mailable
      */
     public function build()
     {
-        return $this->markdown('Email.demoEmail')
-                      ->with('mailData',$this->mailData);
+        return $this->subject("Amazon-Qoo10.com")
+                ->view('Email.receiveOrderEmail');
+                      -
     }
 }

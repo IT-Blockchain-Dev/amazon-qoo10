@@ -14,6 +14,7 @@ class MailController extends Controller
         $email = '';
         $mailData = [
             'title' => 'this is test email',
+            'body' => 'this is body'
             
         ];
 
