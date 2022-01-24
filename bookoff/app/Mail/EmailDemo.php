@@ -32,6 +32,7 @@ class EmailDemo extends Mailable
       public function build()
     {
         return $this->subject('Mail from ItSolutionStuff.com')
-                    ->view('Email.receiveOrderEmail');
+                    ->view('Email.receiveOrderEmail')
+                    ->with('mailData',$this->mailData);
     }
 }
