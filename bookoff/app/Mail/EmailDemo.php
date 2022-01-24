@@ -27,10 +27,11 @@ class EmailDemo extends Mailable
      *
      * @return $this
      */
-    public function build()
+   
+
+      public function build()
     {
-        return $this->subject("Amazon-Qoo10.com")
-                ->view('Email.receiveOrderEmail');
-                      -
+        return $this->subject('Mail from ItSolutionStuff.com')
+                    ->view('Email.receiveOrderEmail');
     }
 }
