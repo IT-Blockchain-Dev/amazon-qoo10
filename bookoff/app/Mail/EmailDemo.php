@@ -16,10 +16,12 @@ class EmailDemo extends Mailable
      *
      * @return void
      */
-    public function __construct($mailData)
+    public $EmailData;
+    public function __construct($EmailData)
     {
         //
-        $this -> mailData = $mailData;
+        
+        $this->EmailData = $EmailData;
     }
 
     /**
@@ -33,7 +35,11 @@ class EmailDemo extends Mailable
     {
         return $this->subject('Mail from ItSolutionStuff.com')
                     ->view('Email.receiveOrderEmail')
-                    ->with('mailData',$this->mailData);
+                    ->with(
+                        [
+                            'EmailData' => $this->EmailData
+                        ]
+                    );
 
     }
 }
