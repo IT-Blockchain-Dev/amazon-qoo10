@@ -107,3 +107,6 @@ Route::post('/selfShipping',[ManageOrderController::class,'selfShipping']);
 Route::post('/finishShipping',[ManageOrderController::class,'finishShipping']);
 Route::post('/saveShippingInfo',[ManageOrderController::class,'saveShippingInfo']);
 Route::post('/sendEmail',[ManageOrderController::class,'sendEmail']);
+Route::post('/getInfoItem',[ManageOrderController::class,'getInfoItem']);
+Route::post('/getLog',[ListingController::class,'getLog']);
+Route::post('/getManageProduct',[ListingController::class,'getManageProduct']);

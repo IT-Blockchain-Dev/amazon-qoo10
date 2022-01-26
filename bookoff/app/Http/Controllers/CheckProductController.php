@@ -19,39 +19,39 @@ class CheckProductController extends Controller
 
     public function checkproduct(Request $request){
 
-    	$user_id = $request->user_id;
+      $user_id = $request->user_id;
         // $result = ImportName::where(['user_id'=>$user_id])->get();
         // $join = ImportName::join('checkasin','checkasin.user_id','=','importname.user_id')
         //      ->where('importname.user_id',$user_id)
         //      ->get(['checkasin.*','importname.import_name','importname.productcount']);
         $result = ImportName::select("checkasin.*","importname.import_name","importname.productcount")
         ->join("checkasin",function($join){
-        	$join->on("checkasin.user_id","=","importname.user_id")
-        	->on("checkasin.importname_id","=","importname.id");
+          $join->on("checkasin.user_id","=","importname.user_id")
+          ->on("checkasin.importname_id","=","importname.id");
         })->where(['checkasin.user_id'=>$user_id])->get();
 
-    	return response()->json([
-    		 'data'=>$result
-    	]);
+      return response()->json([
+         'data'=>$result
+      ]);
     }
 
     public function getAsin(Request $request){
-    	
-    	$user_id = $request->user_id;
-    	$import_id = $request->import_id;
+      
+      $user_id = $request->user_id;
+      $import_id = $request->import_id;
         $start_time = $request->start_time;
         $insert_starttime = CheckProduct::where(['user_id'=>$user_id,'importname_id'=>$import_id])->update(['start_work'=>$start_time]);
         $result = ImportAsin::where(['import_name_id'=>$import_id,'user_id'=>$user_id])->get();
         return response()->json([
 
-        	 'data'=>$result	
+           'data'=>$result  
         ]);
 
     }
 
     public function checkProductInformation(Request $request){
 
-        
+        $productarray = [];
         $productarray = $request->productarray;
         $user_id = $request->user_id;
         $importname_id = $request->importname_id;
@@ -73,7 +73,7 @@ class CheckProductController extends Controller
 
         foreach($productarray as $product){
             $checkresult = 0;
-            Log::info($product);
+            // Log::info($product);
             $temp_asin = $product['asin'];
             $temp_title = $product['title'];
             $temp_deliver_day = $product['between_day'];
@@ -104,6 +104,7 @@ class CheckProductController extends Controller
             if($checkresult!=1 && $checkresult!=2 && $checkresult!=3){
                   array_push($first_check_pass_array,$product);
                   $first_check_pass_count++;
+
             }
             else{
                   $productcheck = ProductCheck::create([
@@ -114,21 +115,27 @@ class CheckProductController extends Controller
                 ]);
 
             }
+
+            // Log::info($first_check_pass_array);
           
            
 
         }
         
         foreach($first_check_pass_array as $first_pass){
+            Log::info($first_pass);
             $checkresult = 0;
-            $temp_together_buy = $product['together_buy'];
-            $temp_price = $product['price'];
-            $temp_stock = $product['quantity'];
+            Log::info($checkresult);
+            $temp_together_buy = $first_pass['together_buy'];
+            $temp_price = $first_pass['price'];
+            $temp_stock = $first_pass['quantity'];
            
-            //together buy
-            // if($temp_together_buy == '一緒に購入'){
-            //      $checkresult = 4; //together buy
-            // }
+            // together buy
+            Log::info($temp_together_buy);
+            if($temp_together_buy == '一緒に購入'){
+                Log::info($temp_together_buy);
+                 $checkresult = 4; //together buy
+            }
 
 
             //no price
@@ -139,51 +146,67 @@ class CheckProductController extends Controller
             if($temp_stock == null){
                 $checkresult = 6; //no stock
             }
-
-             if($checkresult==0){
+             Log::info($checkresult);
+            if($checkresult==0){
                   array_push($second_check_pass_array,$first_pass);
                   $second_check_pass_count++;
             }
+            $check_product = ProductCheck::where([
+                                  'asin'=>$temp_asin
+                             ])
+                            ->get();
+            if(count($check_product)==0){
+                $productcheck = ProductCheck::create([
+                    'user_id' => $user_id,
+                    'imporname_id' =>$importname_id,
+                    'asin' => $temp_asin,
+                    'checkresult' => $checkresult
+            ]);
 
-            $productcheck = ProductCheck::create([
-                        'user_id' => $user_id,
-                        'imporname_id' =>$importname_id,
-                        'asin' => $temp_asin,
-                        'checkresult' => $checkresult
-                ]);
-
+            }    
+            
+            
+           
             }
+
+            // Log::info($second_check_pass_array);
        
 
        $checkproduct_result = CheckProduct::where(['user_id'=>$user_id,'importname_id'=>$importname_id])->update(['total_count'=>$total_product_count,'1pass_count'=>$first_check_pass_count,'2pass_count'=>$second_check_pass_count]);
 
     //    dd($second_check_pass_array);
        foreach($second_check_pass_array as $product){
-           
-           $pass_product_register_result = ProductInformation::create([
-           'user_id' => $user_id,
-           'importname_id' => $importname_id,
-           'asin' => $product['asin'],
-           'title' => $product['title'],
-           'price' => $product['price'],
-           'quantity' => $product['quantity'],
-           'category' => $product['category'],
-           'shipping_day' =>$product['between_day'],
-           'together_buy' => $product['together_buy'],
-           'description' => $product['description'],
-           'ranking' => $product['ranking'],
-           'product_size' => $product['productsize'],
-           'brand' => $product['brand'],
-           'main_imageURL' => $product['main_imageURL']
-           ]);
-           
-           foreach($product['imageurl'] as $img){
-              $register_product_image = ProductImage::create([
-
-                'asin' => $product['asin'],
-                'image_url' => $img
-              ]);
-           }
+           $check_productInfo = ProductInformation::where(['asin'=>$product['asin']])
+                               ->get();
+                             
+           if(count($check_productInfo)==0){
+                // Log::info("ok");
+                    $pass_product_register_result = ProductInformation::create([
+                    'user_id' => $user_id,
+                    'importname_id' => $importname_id,
+                    'asin' => $product['asin'],
+                    'title' => $product['title'],
+                    'price' => $product['price'],
+                    'quantity' => $product['quantity'],
+                    'category' => $product['category'],
+                    'shipping_day' =>$product['between_day'],
+                    'together_buy' => $product['together_buy'],
+                    'description' => $product['description'],
+                    'ranking' => $product['ranking'],
+                    'product_size' => $product['productsize'],
+                    'brand' => $product['brand'],
+                    'main_imageURL' => $product['main_imageURL']
+                    ]);
+                    
+                    foreach($product['imageurl'] as $img){
+                    $register_product_image = ProductImage::create([
+        
+                        'asin' => $product['asin'],
+                        'image_url' => $img
+                    ]);
+                    }
+           }                               
+          
 
 
        }

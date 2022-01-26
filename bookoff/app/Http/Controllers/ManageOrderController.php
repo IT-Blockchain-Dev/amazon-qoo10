@@ -20,7 +20,7 @@ class ManageOrderController extends Controller
 
     public function getOrder(Request $request){
 
-    	date_default_timezone_set("Asia/Tokyo");
+        date_default_timezone_set("Asia/Tokyo");
         $currentTime = Carbon::now();
         $currentTime = $currentTime->toArray();
         $year = $currentTime['year'];
@@ -35,7 +35,7 @@ class ManageOrderController extends Controller
         $url = 'https://api.qoo10.jp/GMKT.INC.Front.QAPIService/ebayjapan.qapi/ShippingBasic.GetShippingInfo_v2';
         $data = [
 
-             'ShippingStat' => '1',
+             'ShippingStat' => '2',
              'search_Sdate' => $currentDate,
              'search_Edate' => $currentDate,
              'search_condition' => '1',  
@@ -61,76 +61,149 @@ class ManageOrderController extends Controller
         curl_close ($ch);
  
         $json_result = json_decode($server_output,true);
-   
-        foreach($json_result['ResultObject'] as $result){
-                 // Log::info($result);
-                 $check_result = Order::where([
+        if(is_array($json_result)){
+            foreach($json_result['ResultObject'] as $result){
+                // Log::info($result);
+                $check_result = Order::where([
+                       'user_id' => $user_id,
+                        'orderNo' => $result['orderNo'],
+                        'itemCode' => $result['itemCode'],
+                        'itemTitle' => $result['itemTitle'],
+                        'orderPrice' => $result['orderPrice'],
+                        'orderQty' => $result['orderQty'],
+                        'receiver' => $result['receiver'],
+                        'zipCode' => $result['zipCode'],
+                        'shippingAddr' => $result['shippingAddr'],
+                        'receiveMobile' => $result['receiverMobile'],
+                        'paymentMethod' => $result['PaymentMethod'],
+                        'receiverEmail' => $result['buyerEmail']
+                ])->get();
+
+                if(!count($check_result)){
+                      $create_result = Order::create([
                         'user_id' => $user_id,
-                 		'orderNo' => $result['orderNo'],
-                 		'itemCode' => $result['itemCode'],
-                 		'itemTitle' => $result['itemTitle'],
-                 		'orderPrice' => $result['orderPrice'],
-                 		'orderQty' => $result['orderQty'],
-                 		'receiver' => $result['receiver'],
-                 		'zipCode' => $result['zipCode'],
-                 		'shippingAddr' => $result['shippingAddr'],
-                 		'receiveMobile' => $result['receiverMobile'],
-                 		'paymentMethod' => $result['PaymentMethod'],
-                         'receiverEmail' => $result['buyerEmail']
-                 ])->get();
+                        'shippingStatus' => $result['shippingStatus'],
+                        'orderDate' => $result['orderDate'],
+                        'paymentDate' => $result['PaymentDate'],
+                        'estShippingDate' => $result['EstShippingDate'],
+                        'orderNo' => $result['orderNo'],
+                        'itemCode' => $result['itemCode'],
+                        'itemTitle' => $result['itemTitle'],
+                        'orderPrice' => $result['orderPrice'],
+                        'orderQty' => $result['orderQty'],
+                        'receiver' => $result['receiver'],
+                        'zipCode' => $result['zipCode'],
+                        'shippingAddr' => $result['shippingAddr'],
+                        'receiveMobile' => $result['receiverMobile'],
+                        'paymentMethod' => $result['PaymentMethod'],
+                        'receiverEmail' => $result['buyerEmail']
 
-                 if(!count($check_result)){
-                       $create_result = Order::create([
-                 		'user_id' => $user_id,
-                 		'shippingStatus' => $result['shippingStatus'],
-                 		'orderDate' => $result['orderDate'],
-                 		'paymentDate' => $result['PaymentDate'],
-                 		'estShippingDate' => $result['EstShippingDate'],
-                 		'orderNo' => $result['orderNo'],
-                 		'itemCode' => $result['itemCode'],
-                 		'itemTitle' => $result['itemTitle'],
-                 		'orderPrice' => $result['orderPrice'],
-                 		'orderQty' => $result['orderQty'],
-                 		'receiver' => $result['receiver'],
-                 		'zipCode' => $result['zipCode'],
-                 		'shippingAddr' => $result['shippingAddr'],
-                 		'receiveMobile' => $result['receiverMobile'],
-                 		'paymentMethod' => $result['PaymentMethod'],
-                         'receiverEmail' => $result['buyerEmail']
+                    ]); 
+                }
 
-                     ]); 
-                 }
+                else{
+                      $create_result = Order::where([
 
-                 else{
-                       $create_result = Order::where([
+                        'user_id' => $user_id,
+                         'orderNo' => $result['orderNo'],
+                         'itemCode' => $result['itemCode'],
 
-                         'user_id' => $user_id,
-                 		 'orderNo' => $result['orderNo'],
-                 		 'itemCode' => $result['itemCode'],
+                      ])->update([
+                        'user_id' => $user_id,
+                        'shippingStatus' => $result['shippingStatus'],
+                        'orderDate' => $result['orderDate'],
+                        'paymentDate' => $result['PaymentDate'],
+                        'estShippingDate' => $result['EstShippingDate'],
+                        'orderNo' => $result['orderNo'],
+                        'itemCode' => $result['itemCode'],
+                        'itemTitle' => $result['itemTitle'],
+                        'orderPrice' => $result['orderPrice'],
+                        'orderQty' => $result['orderQty'],
+                        'receiver' => $result['receiver'],
+                        'zipCode' => $result['zipCode'],
+                        'shippingAddr' => $result['shippingAddr'],
+                        'receiveMobile' => $result['receiverMobile'],
+                        'paymentMethod' => $result['PaymentMethod'],
+                        'receiverEmail' => $result['buyerEmail']
 
-                       ])->update([
-                 		'user_id' => $user_id,
-                 		'shippingStatus' => $result['shippingStatus'],
-                 		'orderDate' => $result['orderDate'],
-                 		'paymentDate' => $result['PaymentDate'],
-                 		'estShippingDate' => $result['EstShippingDate'],
-                 		'orderNo' => $result['orderNo'],
-                 		'itemCode' => $result['itemCode'],
-                 		'itemTitle' => $result['itemTitle'],
-                 		'orderPrice' => $result['orderPrice'],
-                 		'orderQty' => $result['orderQty'],
-                 		'receiver' => $result['receiver'],
-                 		'zipCode' => $result['zipCode'],
-                 		'shippingAddr' => $result['shippingAddr'],
-                 		'receiveMobile' => $result['receiverMobile'],
-                 		'paymentMethod' => $result['PaymentMethod'],
-                         'receiverEmail' => $result['buyerEmail']
+                    ]); 
 
-                     ]); 
-
-                 }
+                }
                 
+             }
         }
+
+        else{
+
+            $result = $json_result['ResultObject'];
+            $check_result = Order::where([
+                'user_id' => $user_id,
+                 'orderNo' => $result['orderNo'],
+                 'itemCode' => $result['itemCode'],
+                 'itemTitle' => $result['itemTitle'],
+                 'orderPrice' => $result['orderPrice'],
+                 'orderQty' => $result['orderQty'],
+                 'receiver' => $result['receiver'],
+                 'zipCode' => $result['zipCode'],
+                 'shippingAddr' => $result['shippingAddr'],
+                 'receiveMobile' => $result['receiverMobile'],
+                 'paymentMethod' => $result['PaymentMethod'],
+                 'receiverEmail' => $result['buyerEmail']
+               ])->get();
+
+            if(!count($check_result)){
+               $create_result = Order::create([
+                 'user_id' => $user_id,
+                 'shippingStatus' => $result['shippingStatus'],
+                 'orderDate' => $result['orderDate'],
+                 'paymentDate' => $result['PaymentDate'],
+                 'estShippingDate' => $result['EstShippingDate'],
+                 'orderNo' => $result['orderNo'],
+                 'itemCode' => $result['itemCode'],
+                 'itemTitle' => $result['itemTitle'],
+                 'orderPrice' => $result['orderPrice'],
+                 'orderQty' => $result['orderQty'],
+                 'receiver' => $result['receiver'],
+                 'zipCode' => $result['zipCode'],
+                 'shippingAddr' => $result['shippingAddr'],
+                 'receiveMobile' => $result['receiverMobile'],
+                 'paymentMethod' => $result['PaymentMethod'],
+                 'receiverEmail' => $result['buyerEmail']
+
+             ]); 
+         }
+
+         else{
+               $create_result = Order::where([
+
+                 'user_id' => $user_id,
+                  'orderNo' => $result['orderNo'],
+                  'itemCode' => $result['itemCode'],
+
+               ])->update([
+                 'user_id' => $user_id,
+                 'shippingStatus' => $result['shippingStatus'],
+                 'orderDate' => $result['orderDate'],
+                 'paymentDate' => $result['PaymentDate'],
+                 'estShippingDate' => $result['EstShippingDate'],
+                 'orderNo' => $result['orderNo'],
+                 'itemCode' => $result['itemCode'],
+                 'itemTitle' => $result['itemTitle'],
+                 'orderPrice' => $result['orderPrice'],
+                 'orderQty' => $result['orderQty'],
+                 'receiver' => $result['receiver'],
+                 'zipCode' => $result['zipCode'],
+                 'shippingAddr' => $result['shippingAddr'],
+                 'receiveMobile' => $result['receiverMobile'],
+                 'paymentMethod' => $result['PaymentMethod'],
+                 'receiverEmail' => $result['buyerEmail']
+
+             ]); 
+
+         }
+
+        }
+       
 
         return response()->json([
 
@@ -142,24 +215,24 @@ class ManageOrderController extends Controller
         
         $user_id = $request->user_id;
         $get_result = Order::where([
-        	'user_id' => $user_id
+            'user_id' => $user_id
         ])->get();
 
         return response()->json([
 
-        	'data' => $get_result	
+            'data' => $get_result   
         ]);
     }
 
     public function displaySingleOrder(Request $request){
         Log::info($request->orderNo);
-    	$order_id = intval($request->orderNo);
-    	$get_single_order = Order::where([
-    		'orderNo' => $order_id
-    	])->get();
+        $order_id = intval($request->orderNo);
+        $get_single_order = Order::where([
+            'orderNo' => $order_id
+        ])->get();
         
         return response()->json([
-        	'data' => $get_single_order
+            'data' => $get_single_order
         ]);
 
      }
@@ -304,7 +377,7 @@ class ManageOrderController extends Controller
     public function sendEmail(Request $request){
 
         // $email = $request -> email_address;
-        $email = 'patriotjoo@gmail.com';
+        $email = $request->email_address;
         $mailData = [
             'title' => 'this is test email'
             
@@ -315,6 +388,43 @@ class ManageOrderController extends Controller
         return response()->json([
             'message' => 'Email has been sent.'
         ],Response::HTTP_OK);
+    }
+
+    //get info item function
+    public function getInfoItem(Request $request){
+             
+        $url = 'https://api.qoo10.jp/GMKT.INC.Front.QAPIService/ebayjapan.qapi/ItemsLookup.GetGoodsOptionInfo';
+        $data = [
+               'ItemCode'=>'956628364',
+               'SellerCode'=>''
+               
+        ];
+
+         $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL,$url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS,http_build_query($data));
+        curl_setopt(
+            $ch, 
+            CURLOPT_HTTPHEADER, 
+            array(
+                'Content-Type: application/x-www-form-urlencoded', // for define content type that is json
+                'QAPIVersion: 1.0',
+                'GiosisCertificationKey: S5bnbfynQvOKjKOOi6rqr2kyaKwK_g_1__g_2_tyLHiSIJ7jifeGJ_g_2_tYHO_g_2_9lvlRVaBoXZdsquVBC3VERFI1swTZz8Jx_g_2_LTtMbTKziDCTpt62xvJx39u3jjQuqwyYOeGwPXWePCD',
+
+            ));
+        curl_setopt($ch, CURLOPT_TIMEOUT, 36000);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $server_output = curl_exec($ch);
+        curl_close ($ch);
+        $result_code = json_decode($server_output);
+        // $result_code = $result_code->ResultCode;
+    
+        return response()->json([
+
+            'data' => $result_code
+        ]);
     }
     
 
