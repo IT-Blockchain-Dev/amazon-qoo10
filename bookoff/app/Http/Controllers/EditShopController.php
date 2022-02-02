@@ -16,25 +16,19 @@ class EditShopController extends Controller
     public function index(){
         return view('front.Editshop');
     }
-
-    public function registerStore(Request $request){
-        
+    
+    public function getKey(Request $request){
         $user_id1 = $request -> user_id;
         $store_id = $request -> store_id;
         $store_login_id = $request -> store_login_id;
         $store_login_pwd = $request -> store_login_pwd;
         $qoo10_api_key = $request -> qoo10_key;
-        // $certGenerator = new Qoo10CertGenerator();
-        // $cert = $certGenerator->certGenerate($qoo10_api_key, $store_login_id, $store_login_pwd);
-        $pool = Pool::create();
-        $pool->add(function () use ($user_id1,$qoo10_api_key,$store_id, $store_login_id,$store_login_pwd) {
-            // Do a thing
-            $certGenerator = new Qoo10CertGenerator();
-            $cert = $certGenerator->certGenerate($qoo10_api_key, $store_login_id, $store_login_pwd);
-            $xml=simplexml_load_string($cert) or die("Error: Cannot create object");
-            $json = json_encode($xml);
-            $array = json_decode($json,TRUE);
-            $result = array(
+        $certGenerator = new Qoo10CertGenerator();
+        $cert = $certGenerator->certGenerate($qoo10_api_key, $store_login_id, $store_login_pwd);
+        $xml=simplexml_load_string($cert) or die("Error: Cannot create object");
+        $json = json_encode($xml);
+        $array = json_decode($json,TRUE);
+        $result = array(
                 'user_id' => $user_id1,
                 'store_id' => $store_id,
                 'qoo10_api_key' => $qoo10_api_key,
@@ -43,37 +37,51 @@ class EditShopController extends Controller
                 'qoo10_api_key' => $qoo10_api_key,
                 'qoo10_auth_key' => $array['ResultObject']
             );
-            return $result;
-        })->then(function ($result) {
-            // Handle success
-            $check_store = Store::where(['user_id'=>$result['user_id']]) -> get();
+        return response()->json([
+              'key' => $array['ResultObject']
+        ]);
+    }
+
+
+    public function registerStore(Request $request){
+        
+        $user_id = $request -> user_id;
+        $store_id = $request -> store_id;
+        $store_login_id = $request -> store_login_id;
+        $store_login_pwd = $request -> store_login_pwd;
+        $qoo10_api_key = $request -> qoo10_key;
+        $qoo10_auth_key = $request -> qoo10_auth_key;
+        // $certGenerator = new Qoo10CertGenerator();
+        // $cert = $certGenerator->certGenerate($qoo10_api_key, $store_login_id, $store_login_pwd);
+      
+            // Do a thing
+        
+    
+            $check_store = Store::where(['user_id'=>$user_id]) -> get();
             if(!count($check_store)){
                   
                   $record = Store::create([
-                        'user_id' => $result['user_id'],
-                        'store_id' => $result['store_id'],
-                        'store_login_id' => $result['store_login_id'],
-                        'store_login_pwd' => $result['store_login_pwd'],
-                        'qoo10_api_key' => $result['qoo10_api_key'],
-                        'qoo10_auth_key' => $result['qoo10_auth_key']
+                        'user_id' => $user_id,
+                        'store_id' => $store_login_id,
+                        'store_login_id' => $store_login_id,
+                        'store_login_pwd' => $store_login_pwd,
+                        'qoo10_api_key' => $qoo10_api_key,
+                        'qoo10_auth_key' => $qoo10_auth_key,
+
                   ]);
 
             }
 
             else{
                 
-                $update_store = Store::where(['user_id' => $result['user_id']]) ->
-                                 update(['store_id'=>$result['store_id'],'store_login_id'=>$result['store_login_id'],
-                                        'store_login_pwd' => $result['store_login_pwd'],'qoo10_api_key'=>$result['qoo10_api_key'],
-                                        'qoo10_auth_key' => $result['qoo10_auth_key']]);
+                $update_store = Store::where(['user_id' => $user_id]) ->
+                                 update(['store_id'=>$store_login_id,'store_login_id'=>$store_login_id,
+                                        'store_login_pwd' => $store_login_pwd,'qoo10_api_key'=>$qoo10_api_key,
+                                        'qoo10_auth_key' => $qoo10_auth_key]);
 
             }
             
-        })->catch(function (Throwable $exception) {
-            // Handle exception
-        });
-
-        $pool->wait();
+    
         return response() -> json([
             'data' => 'true'
         ]);
