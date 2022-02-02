@@ -10,11 +10,14 @@ use Symfony\Component\HttpFoundation\Response;
 class MailController extends Controller
 {
     //
-    public function sendEmail(){
-        $email = '';
+    public function sendEmail(Request $request){
+        $email = $request -> email_address;
         $mailData = [
-            'title' => 'this is test email',
-            'body' => 'this is body'
+            'title' => '注文受付',
+            'body' => 'はじめまして。
+                       注文いただきありがとうございます。
+                       間もなく発送いたします。お待ちください。
+                       よろしくお願いいたします。'
             
         ];
 

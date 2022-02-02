@@ -376,10 +376,13 @@ class ManageOrderController extends Controller
     //send email function
     public function sendEmail(Request $request){
 
-        // $email = $request -> email_address;
-        $email = $request->email_address;
+        $email = $request -> email_address;
         $mailData = [
-            'title' => 'this is test email'
+            'title' => '注文受付',
+            'body' => 'はじめまして。
+                       注文いただきありがとうございます。
+                       間もなく発送いたします。お待ちください。
+                       よろしくお願いいたします。'
             
         ];
 
@@ -388,6 +391,25 @@ class ManageOrderController extends Controller
         return response()->json([
             'message' => 'Email has been sent.'
         ],Response::HTTP_OK);
+
+    }
+
+    //send free email function
+    public function sendFreeEmail(Request $request){
+
+        $email_address = $request -> email_address;
+        $email_content = $request -> email_content;
+        $mailData = [
+            'title' => '注文受付',
+            'body' =>  $email_content
+            
+        ];
+        Mail::to($email_address)->send(new EmailDemo($mailData));
+        
+        return response()->json([
+            'message' => 'Email has been sent.'
+        ],Response::HTTP_OK);
+
     }
 
     //get info item function
