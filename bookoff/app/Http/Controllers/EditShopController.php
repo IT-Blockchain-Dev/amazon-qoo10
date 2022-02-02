@@ -26,7 +26,7 @@ class EditShopController extends Controller
         $url = 'https://api.qoo10.jp/GMKT.INC.Front.QAPIService/ebayjapan.qapi/CertificationAPI.CreateCertificationKey';
         $data = [
 
-                'user_id' => $user_id,
+                'user_id' => $store_login_id,
                 'pwd' => $store_login_pwd,
                 'key' => $qoo10_api_key
         ];
