@@ -24,7 +24,8 @@ class EditShopController extends Controller
         $store_login_id = $request -> store_login_id;
         $store_login_pwd = $request -> store_login_pwd;
         $qoo10_api_key = $request -> qoo10_key;
-        
+        // $certGenerator = new Qoo10CertGenerator();
+        // $cert = $certGenerator->certGenerate($qoo10_api_key, $store_login_id, $store_login_pwd);
         $pool = Pool::create();
         $pool->add(function () use ($user_id1,$qoo10_api_key,$store_id, $store_login_id,$store_login_pwd) {
             // Do a thing
@@ -74,7 +75,7 @@ class EditShopController extends Controller
 
         $pool->wait();
         return response() -> json([
-            'status' => 'true'
+            'data' => 'true'
         ]);
        
    

@@ -111,3 +111,4 @@ Route::post('/getInfoItem',[ManageOrderController::class,'getInfoItem']);
 Route::post('/getLog',[ListingController::class,'getLog']);
 Route::post('/getManageProduct',[ListingController::class,'getManageProduct']);
 Route::post('/sendFreeEmail',[ManageOrderController::class,'sendFreeEmail']);
+Route::post('/getKey',[ImportAsinController::class,'index']);

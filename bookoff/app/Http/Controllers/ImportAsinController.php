@@ -16,9 +16,12 @@ class ImportAsinController extends Controller
         $userId = 'mattya3585';
         $password = 'momotto110A';
 
-        // $certGenerator = new Qoo10CertGenerator();
-        // $cert = $certGenerator->certGenerate($key, $userId, $password);
-
+        $certGenerator = new Qoo10CertGenerator();
+        $cert = $certGenerator->certGenerate($key, $userId, $password);
+        Log::info($cert);
+        return response()->json([
+                'data' => $cert
+        ]);
 
         // $processor = new Qoo10ApiProcessor();
         // $processor->setCertificate($cert);
@@ -53,26 +56,26 @@ class ImportAsinController extends Controller
         // // Further processing ...
         // if ($server_output == "OK") { } 
         // else { }
-        $xml = simplexml_load_file("D:/category.xml");
-        $id=1;
-        $str_category="";
-        foreach($xml->ResultObject->CommonCategoryInfo as $category){
-            $str_category .=sprintf(
-                "%s : %s > %s > %s : %s\n",
-                $id,
-                $category->CATE_L_NM,
-                $category->CATE_M_NM,
-                $category->CATE_S_NM,
-                $category->CATE_S_CD
-            );
-            echo $id.",";
-            echo $category->CATE_L_NM.">";
-            echo $category->CATE_M_NM.">";
-            echo $category->CATE_S_NM.":";
-            echo $category->CATE_S_CD."<br>";
-            $id++;
-        }
-        file_put_contents('D:/Qoo10_category.txt',$str_category);
+        // $xml = simplexml_load_file("D:/category.xml");
+        // $id=1;
+        // $str_category="";
+        // foreach($xml->ResultObject->CommonCategoryInfo as $category){
+        //     $str_category .=sprintf(
+        //         "%s : %s > %s > %s : %s\n",
+        //         $id,
+        //         $category->CATE_L_NM,
+        //         $category->CATE_M_NM,
+        //         $category->CATE_S_NM,
+        //         $category->CATE_S_CD
+        //     );
+        //     echo $id.",";
+        //     echo $category->CATE_L_NM.">";
+        //     echo $category->CATE_M_NM.">";
+        //     echo $category->CATE_S_NM.":";
+        //     echo $category->CATE_S_CD."<br>";
+        //     $id++;
+        // }
+        // file_put_contents('D:/Qoo10_category.txt',$str_category);
         
        
     }
