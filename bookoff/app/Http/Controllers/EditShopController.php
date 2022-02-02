@@ -18,16 +18,16 @@ class EditShopController extends Controller
     }
     
     public function getKey(Request $request){
-        $user_id1 = $request -> user_id;
-        $store_id = $request -> store_id;
+        $user_id = $request -> user_id;
+        // $store_id = $request -> store_id;
         $store_login_id = $request -> store_login_id;
         $store_login_pwd = $request -> store_login_pwd;
         $qoo10_api_key = $request -> qoo10_key;
         $url = 'https://api.qoo10.jp/GMKT.INC.Front.QAPIService/ebayjapan.qapi/CertificationAPI.CreateCertificationKey';
         $data = [
 
-                'user_id' => '697129307',
-                'pwd' => '20211225',
+                'user_id' => $user_id,
+                'pwd' => $store_login_pwd,
                 'key' => $qoo10_api_key
         ];
 
