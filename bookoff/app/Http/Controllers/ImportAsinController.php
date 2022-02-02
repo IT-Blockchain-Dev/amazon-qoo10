@@ -12,16 +12,16 @@ class ImportAsinController extends Controller
     //
     public function index(){
         // return view('front.ImportAsin');
-        $key = 'BhiQeRsAhG2U11EPJ9tjQuxtmocnpd_g_2_iDPlGfd8xgv4_g_3_';
-        $userId = 'mattya3585';
-        $password = 'momotto110A';
+        // $key = 'BhiQeRsAhG2U11EPJ9tjQuxtmocnpd_g_2_iDPlGfd8xgv4_g_3_';
+        // $userId = 'mattya3585';
+        // $password = 'momotto110A';
 
-        $certGenerator = new Qoo10CertGenerator();
-        $cert = $certGenerator->certGenerate($key, $userId, $password);
-        Log::info($cert);
-        return response()->json([
-                'data' => $cert
-        ]);
+        // $certGenerator = new Qoo10CertGenerator();
+        // $cert = $certGenerator->certGenerate($key, $userId, $password);
+        // Log::info($cert);
+        // return response()->json([
+        //         'data' => $cert
+        // ]);
 
         // $processor = new Qoo10ApiProcessor();
         // $processor->setCertificate($cert);
