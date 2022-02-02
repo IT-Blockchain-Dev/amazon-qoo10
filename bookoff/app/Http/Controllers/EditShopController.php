@@ -23,23 +23,54 @@ class EditShopController extends Controller
         $store_login_id = $request -> store_login_id;
         $store_login_pwd = $request -> store_login_pwd;
         $qoo10_api_key = $request -> qoo10_key;
-        $certGenerator = new Qoo10CertGenerator();
-        $cert = $certGenerator->certGenerate($qoo10_api_key, $store_login_id, $store_login_pwd);
-        $xml=simplexml_load_string($cert) or die("Error: Cannot create object");
-        $json = json_encode($xml);
-        $array = json_decode($json,TRUE);
-        $result = array(
-                'user_id' => $user_id1,
-                'store_id' => $store_id,
-                'qoo10_api_key' => $qoo10_api_key,
-                'store_login_id' => $store_login_id,
-                'store_login_pwd' => $store_login_pwd,
-                'qoo10_api_key' => $qoo10_api_key,
-                'qoo10_auth_key' => $array['ResultObject']
-            );
+        $url = 'https://api.qoo10.jp/GMKT.INC.Front.QAPIService/ebayjapan.qapi/CertificationAPI.CreateCertificationKey';
+        $data = [
+
+                'user_id' => '697129307',
+                'pwd' => '20211225',
+                'key' => $qoo10_api_key
+        ];
+
+         $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL,$url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS,http_build_query($data));
+        curl_setopt(
+            $ch, 
+            CURLOPT_HTTPHEADER, 
+            array(
+                'Content-Type: application/x-www-form-urlencoded', // for define content type that is json
+               
+                'QAPIVersion: 1.0'
+            ));
+        curl_setopt($ch, CURLOPT_TIMEOUT, 36000);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $server_output = curl_exec($ch);
+        curl_close ($ch);
+ 
+
         return response()->json([
-              'key' => $array['ResultObject']
+
+            'data' => $server_output
         ]);
+        // $certGenerator = new Qoo10CertGenerator();
+        // $cert = $certGenerator->certGenerate($qoo10_api_key, $store_login_id, $store_login_pwd);
+        // $xml=simplexml_load_string($cert) or die("Error: Cannot create object");
+        // $json = json_encode($xml);
+        // $array = json_decode($json,TRUE);
+        // $result = array(
+        //         'user_id' => $user_id1,
+        //         'store_id' => $store_id,
+        //         'qoo10_api_key' => $qoo10_api_key,
+        //         'store_login_id' => $store_login_id,
+        //         'store_login_pwd' => $store_login_pwd,
+        //         'qoo10_api_key' => $qoo10_api_key,
+        //         'qoo10_auth_key' => $array['ResultObject']
+        //     );
+        // return response()->json([
+        //       'key' => $array['ResultObject']
+        // ]);
     }
 
 
