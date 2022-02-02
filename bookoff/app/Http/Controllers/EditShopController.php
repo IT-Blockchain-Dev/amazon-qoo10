@@ -48,13 +48,13 @@ class EditShopController extends Controller
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $cert = curl_exec($ch);
         curl_close ($ch);
-         $xml=simplexml_load_string($cert) or die("Error: Cannot create object");
-        $json = json_encode($xml);
-        $array = json_decode($json,TRUE);
+        //  $xml=simplexml_load_string($cert) or die("Error: Cannot create object");
+        // $json = json_encode($xml);
+        // $array = json_decode($json,TRUE);
 
         return response()->json([
 
-            'key' => $array['ResultObject']
+            'key' => $cert
         ]);
         // $certGenerator = new Qoo10CertGenerator();
         // $cert = $certGenerator->certGenerate($qoo10_api_key, $store_login_id, $store_login_pwd);
