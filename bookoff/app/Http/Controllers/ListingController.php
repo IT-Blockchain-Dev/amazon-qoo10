@@ -100,7 +100,7 @@ class ListingController extends Controller
       }
       
       return response()->json([
-          'data' => $server_output
+          'data' => 'true'
       ]);
 
    ///////////SetSellerCheck API

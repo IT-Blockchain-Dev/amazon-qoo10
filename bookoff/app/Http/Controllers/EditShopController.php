@@ -49,7 +49,7 @@ class EditShopController extends Controller
         $cert = curl_exec($ch);
         curl_close ($ch);
         //  $xml=simplexml_load_string($cert) or die("Error: Cannot create object");
-        // $json = json_encode($xml);
+        $json = json_encode($xml);
         // $array = json_decode($json,TRUE);
 
         return response()->json([
