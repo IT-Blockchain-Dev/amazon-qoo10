@@ -55,6 +55,7 @@ class CheckProductController extends Controller
         $productarray = $request->productarray;
         $user_id = $request->user_id;
         $importname_id = $request->importname_id;
+        Log::info($user_id);
         $asin_check_result = [];
         $temp_asin='';
         $checkresult = 0;
@@ -139,11 +140,11 @@ class CheckProductController extends Controller
 
 
             //no price
-            if($temp_price == null){
+            if($temp_price == null || $temp_price == NaN){
                 $checkresult = 5; // no price
             }
 
-            if($temp_stock == null){
+            if($temp_stock == null || $temp_stock == NaN){
                 $checkresult = 6; //no stock
             }
              Log::info($checkresult);
