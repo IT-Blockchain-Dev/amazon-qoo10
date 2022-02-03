@@ -161,6 +161,7 @@ class ListingController extends Controller
          $result = ProductInformation::where([
                'user_id' =>$user_id
          ])
+         ->whereNotNull('itemNo')
          ->get();
 
          return response()->json([
