@@ -84,6 +84,7 @@ class EditShopController extends Controller
         $store_login_pwd = $request -> store_login_pwd;
         $qoo10_api_key = $request -> qoo10_key;
         $qoo10_auth_key = $request -> qoo10_auth_key;
+        $price_multiple = $request -> price_multiple;
         // $certGenerator = new Qoo10CertGenerator();
         // $cert = $certGenerator->certGenerate($qoo10_api_key, $store_login_id, $store_login_pwd);
       
@@ -100,6 +101,7 @@ class EditShopController extends Controller
                         'store_login_pwd' => $store_login_pwd,
                         'qoo10_api_key' => $qoo10_api_key,
                         'qoo10_auth_key' => $qoo10_auth_key,
+                        'price_multiple' => $price_multiple
 
                   ]);
 
@@ -110,7 +112,7 @@ class EditShopController extends Controller
                 $update_store = Store::where(['user_id' => $user_id]) ->
                                  update(['store_id'=>$store_login_id,'store_login_id'=>$store_login_id,
                                         'store_login_pwd' => $store_login_pwd,'qoo10_api_key'=>$qoo10_api_key,
-                                        'qoo10_auth_key' => $qoo10_auth_key]);
+                                        'qoo10_auth_key' => $qoo10_auth_key,'price_multiple' => $price_multiple]);
 
             }
             

@@ -15,7 +15,8 @@ class Store extends Model
         'store_login_id',
         'store_login_pwd',
         'qoo10_api_key',
-        'qoo10_auth_key'
+        'qoo10_auth_key',
+        'price_multiple'
        
     ];
 

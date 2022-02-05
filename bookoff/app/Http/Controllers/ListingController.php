@@ -20,7 +20,7 @@ class ListingController extends Controller
       $user_id = $request -> user_id;
       $importname_id = $request -> importname_id;
       $qoo10_auth_key = Store::where(['user_id' => $user_id]) -> get();
-
+      $price_multiple = $qoo10_auth_key[0]['price_multiple'];
       $search_result = ProductInformation::where(['user_id' => $user_id,'importname_id' => $importname_id])->get();
       
       $products = ProductInformation::select("product_information.*","table_categorymatching.qoo10_category_name","table_categorymatching.qoo10_category_id")
@@ -30,8 +30,7 @@ class ListingController extends Controller
     
       foreach($products as $product){
        
-        // $product_images = ProductImage::where(['asin' => $product['asin']]) -> get();
-        // dd($qoo10_auth_key[0]['qoo10_auth_key']);
+        $price = $product['price'] * $price_multiple;
         $url = 'http://api.qoo10.jp/GMKT.INC.Front.QAPIService/ebayjapan.qapi/ItemsBasic.SetNewGoods';
         $data = [
 
@@ -56,7 +55,7 @@ class ListingController extends Controller
             'StandardImage' => $product['main_imageURL'],
             'VideoURL' => '',
             'ItemDescription' => $product['description'],
-            'ItemPrice' => $product['price'],
+            'ItemPrice' => $price,
             'ItemQty' => $product['quantity'],
             'RetailPrice' => '',
             'ExpireDate' => '',
