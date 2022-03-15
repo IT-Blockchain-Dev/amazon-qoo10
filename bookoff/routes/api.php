@@ -92,7 +92,6 @@ Route::post('/blackasin',[ImportBlacklistController::class,'blackAsinImport']);
 Route::post('import/ngword',[ImportBlacklistController::class,'ngwordImport']);
 Route::post('import/productasin',[ImportProductAsinController::class,'importasin']);
 Route::post('checkproduct',[CheckProductController::class,'checkproduct']);
-
 Route::post('/getAsin',[CheckProductController::class,'getAsin']);
 Route::post('/check/product',[CheckProductController::class,'checkProductInformation']);
 Route::get('/setItem',[ImportAsinController::class,'setItem']);
@@ -112,3 +111,4 @@ Route::post('/getLog',[ListingController::class,'getLog']);
 Route::post('/getManageProduct',[ListingController::class,'getManageProduct']);
 Route::post('/sendFreeEmail',[ManageOrderController::class,'sendFreeEmail']);
 Route::post('/getKey',[EditShopController::class,'getKey']);
+Route::post('/getShopInfo',[EditShopController::class,'getShopInfo']);

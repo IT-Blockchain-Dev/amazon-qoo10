@@ -120,9 +120,15 @@ class EditShopController extends Controller
         return response() -> json([
             'data' => 'true'
         ]);
-       
-   
+  
+    }
 
-        
+    public function getShopInfo(Request $request){
+     
+           $user_id = $request -> user_id;
+           $shop_info = Store::where(['user_id' => $user_id]) -> get();
+           return response() -> json([
+               'data' => $shop_info
+           ]);
     }
 }
